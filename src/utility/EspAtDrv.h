@@ -22,7 +22,7 @@
 
 #include <Arduino.h>
 #include <IPAddress.h>
-#include "utility/EspAtDrvTypes.h"
+#include "EspAtDrvTypes.h"
 
 const uint8_t LINKS_COUNT = WIFIESPAT_LINKS_COUNT;
 const uint8_t NO_LINK = WIFIESPAT_NO_LINK;
@@ -33,7 +33,8 @@ const uint8_t LINK_IS_INCOMING = (1 << 2);
 const uint8_t LINK_IS_ACCEPTED = (1 << 3);
 const uint8_t LINK_IS_UDP_LISTNER = (1 << 4);
 
-struct LinkInfo {
+struct LinkInfo
+{
   uint8_t flags = 0;
   size_t available = 0;
 
@@ -41,27 +42,30 @@ struct LinkInfo {
   EspAtDrvUdpDataCallback* udpDataCallback;
 #endif
 
-  bool isConnected() { return flags & LINK_CONNECTED;}
-  bool isClosing() { return flags & LINK_CLOSING;}
-  bool isIncoming() { return flags & LINK_IS_INCOMING;}
-  bool isAccepted() { return flags & LINK_IS_ACCEPTED;}
-  bool isUdpListener() { return flags & LINK_IS_UDP_LISTNER;}
+  bool isConnected()
+  {
+    return flags & LINK_CONNECTED;
+  }
+  bool isClosing() { return flags & LINK_CLOSING; }
+  bool isIncoming() { return flags & LINK_IS_INCOMING; }
+  bool isAccepted() { return flags & LINK_IS_ACCEPTED; }
+  bool isUdpListener() { return flags & LINK_IS_UDP_LISTNER; }
 };
 
-class EspAtDrvClass {
-public:
-
+class EspAtDrvClass
+{
+ public:
   bool init(Stream* serial, int8_t resetPin = -1);
 
   bool reset(int8_t resetPin = -1);
   void maintain();
-  EspAtDrvError getLastErrorCode() {return lastErrorCode;}
+  EspAtDrvError getLastErrorCode() { return lastErrorCode; }
   bool firmwareVersion(char* buff);
   bool sysPersistent(bool persistent);
 
   int staStatus();
 
-  uint8_t listAP(WiFiApData apData[], uint8_t size); // returns count of filled records
+  uint8_t listAP(WiFiApData apData[], uint8_t size);  // returns count of filled records
 
   bool staStaticIp(const IPAddress& local_ip, const IPAddress& gateway, const IPAddress& subnet);
   bool staDNS(const IPAddress& dns1, const IPAddress& dns2);
@@ -79,8 +83,7 @@ public:
   bool softApMacQuery(uint8_t* mac);
   bool softApIpQuery(IPAddress& ip, IPAddress& gwip, IPAddress& mask);
 
-  bool beginSoftAP(const char *ssid = nullptr, const char* passphrase = nullptr, uint8_t channel = 1,
-      uint8_t encoding = 4, uint8_t maxConnections = 0, bool hidden = false);
+  bool beginSoftAP(const char* ssid = nullptr, const char* passphrase = nullptr, uint8_t channel = 1, uint8_t encoding = 4, uint8_t maxConnections = 0, bool hidden = false);
   bool endSoftAP(bool persistent = false);
   bool softApQuery(char* ssid, char* passphrase, uint8_t& channel, uint8_t& encoding, uint8_t& maxConnections, bool& hidden);
 
@@ -89,11 +92,11 @@ public:
   uint8_t clientLinkId(bool accept = false);
   uint8_t clientLinkIds(uint8_t linkIds[]);
 
-  uint8_t connect(const char* type, const char* host, uint16_t port, //
+  uint8_t connect(const char* type, const char* host, uint16_t port,  //
 #ifdef WIFIESPAT1
-      EspAtDrvUdpDataCallback* udpDataCallback = nullptr, 
-#endif      
-      uint16_t udpLocalPort = 0);
+                  EspAtDrvUdpDataCallback* udpDataCallback = nullptr,
+#endif
+                  uint16_t udpLocalPort = 0);
   bool close(uint8_t linkId, bool abort = false);
   bool remoteParamsQuery(uint8_t linkId, IPAddress& remoteIP, uint16_t& remoteParamsQuery);
 
@@ -108,7 +111,7 @@ public:
 
   bool setHostname(const char* hostname);
   bool hostnameQuery(char* hostname);
-  bool dhcpStateQuery(bool& staDHCP, bool& softApDHCP); // they have nothing in common, but use the same command
+  bool dhcpStateQuery(bool& staDHCP, bool& softApDHCP);  // they have nothing in common, but use the same command
   bool mDNS(const char* hostname, const char* serverName, uint16_t serverPort);
   bool resolve(const char* hostname, IPAddress& result);
   bool sntpCfg(int8_t timezone, const char* server1, const char* server2);
@@ -120,9 +123,9 @@ public:
 
   void ip2str(const IPAddress& ip, char* s);
 
-private:
+ private:
   Stream* serial;
-  Print* cmd; // debug wrapper or serial
+  Print* cmd;  // debug wrapper or serial
   char buffer[64];
   bool persistent = false;
   uint8_t wifiMode = 0;
@@ -143,7 +146,7 @@ private:
   bool recvLenQuery();
   bool checkLinks();
 
-  bool sysStoreInternal(bool store); // AT 2
+  bool sysStoreInternal(bool store);  // AT 2
 };
 
 extern EspAtDrvClass EspAtDrv;
